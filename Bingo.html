@@ -1,0 +1,391 @@
+<html>
+
+<head>
+    <title>B - I - N - G - O</title>
+    <link rel="icon" type="image/png" sizes="48x48" href="assets/icon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    ```
+    <style>
+        body {
+            margin: 0;
+            background-image: url("assets/bg.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: flex-start;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(200, 200, 200, 0.5);
+            z-index: 0;
+        }
+
+        .board-container,
+        .right-section {
+            position: relative;
+            z-index: 1;
+        }
+
+        .board-container {
+            width: 95vw;
+            height: 70vh;
+            margin: 20px 0 0 0;
+        }
+
+        .bingo-board {
+            display: grid;
+            grid-template-columns: repeat(16, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 2px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .bingo-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px; /* Bingo Board Font size */
+            cursor: pointer;
+        }
+
+        .bingo-cell.highlighted {
+            background-color: #fef250;
+            font-weight: bold;
+            border-radius: 50%;
+            font-weight: bold;
+        }
+
+        .bingo-left-cell {
+            font-weight: bold;
+            font-size: 50px;
+        }
+
+        .right-section {
+            width: 35vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 40px;
+            box-sizing: border-box;
+        }
+
+        .called-number {
+            font-size: 90px;
+            font-family: verdana;
+            font-weight: bold;
+            background: none;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .pattern-board {
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 5px;
+        }
+
+        .pattern-cell {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            font-weight: bold;
+            background: #fff;
+            cursor: pointer;
+            border: 2px solid #333;
+            border-radius: 6px;
+        }
+
+        .pattern-cell.active {
+            background: #ffd966;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .Prize {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 8px 14px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #23c434;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .control-group{
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: 430px;
+        }
+
+        .reset-button {
+            background-color: #ff6347;
+        }
+
+        .reset-button:hover {
+            background-color: #e55347;
+        }
+    </style>
+    ```
+
+</head>
+
+<body>
+    <!-- Left: Bingo board -->
+    <div class="board-container">
+        <div class="bingo-board" id="bingoBoard"></div>
+
+        <br><br>
+        <div class="Prize">
+            <label> Enter Prize: </label>
+            <input id="Prize">
+            <button id="Prizebtn"> CONFIRM </button>
+            <button class="reset-button" onclick="resetPrize()"> REMOVE </button>
+
+            <div class="control-group">
+                <button class="reset-button add-gap" onclick="resetBoard()">RESTART BOARD</button>
+                <button class="reset-button" onclick="resetAll()">RESTART ALL</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Right: Called number + pattern board + controls -->
+    <div class="right-section">
+        <div class="called-number" id="calledNumber"> !!! </div>
+        <h1 id="DisplayPrize"></h1>
+
+        <!-- Pattern guide -->
+        <div class="pattern-board" id="patternBoard"></div>
+
+        <!-- Control buttons -->
+        <div class="controls">
+            <button onclick="callNumber()">Call Number</button>
+            <button onclick="triggerEffects()"> Congratulations!! 🎉</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        const board = document.getElementById("bingoBoard");
+        const calledNumberElement = document.getElementById("calledNumber");
+        const patternBoard = document.getElementById("patternBoard");
+
+        let calledNumbers = [];
+        let allNumbers = [];
+        let activeFilters = new Set();
+
+        function generateBoard() {
+            board.innerHTML = "";
+            const letters = ["B", "I", "N", "G", "O"];
+            for (let i = 0; i < 5; i++) {
+                for (let j = 0; j < 16; j++) {
+                    const cell = document.createElement("div");
+                    cell.classList.add("bingo-cell");
+                    if (j === 0) {
+                        cell.textContent = letters[i];
+                        cell.classList.add("bingo-left-cell");
+                    } else {
+                        cell.textContent = (j + (i * 15)).toString();
+                    }
+                    board.appendChild(cell);
+                }
+            }
+            allNumbers = Array.from({ length: 75 }, (_, i) => i + 1);
+            calledNumbers = [];
+        }
+
+        function generatePatternBoard() {
+            patternBoard.innerHTML = "";
+            const letters = ["B", "I", "N", "G", "O"];
+
+            // Top row: letters
+            for (let i = 0; i < 5; i++) {
+                const cell = document.createElement("div");
+                cell.classList.add("pattern-cell");
+                cell.textContent = letters[i];
+                cell.onclick = () => togglePatternCell(cell, letters[i]);
+                patternBoard.appendChild(cell);
+            }
+
+            // 4 more rows: empty cells
+            for (let r = 0; r < 4; r++) {
+                for (let c = 0; c < 5; c++) {
+                    const cell = document.createElement("div");
+                    cell.classList.add("pattern-cell");
+                    cell.onclick = () => togglePatternCell(cell, letters[c]);
+                    patternBoard.appendChild(cell);
+                }
+            }
+        }
+
+        function togglePatternCell(cell, letter) {
+            if (cell.classList.contains("active")) {
+                cell.classList.remove("active");
+
+                // If no more active cells of this letter remain, remove filter
+                const stillActive = [...patternBoard.children].some(c => c.classList.contains("active") && c.onclick.toString().includes(letter));
+                if (!stillActive) activeFilters.delete(letter);
+            } else {
+                cell.classList.add("active");
+                activeFilters.add(letter);
+            }
+        }
+
+        function callNumber() {
+            if (allNumbers.length === 0) {
+                calledNumberElement.textContent = "All Done!";
+                return;
+            }
+
+            let availableNumbers = [...allNumbers];
+
+            if (activeFilters.size > 0) {
+                let filtered = [];
+                activeFilters.forEach(letter => {
+                    let range;
+                    if (letter === "B") range = [1, 15];
+                    else if (letter === "I") range = [16, 30];
+                    else if (letter === "N") range = [31, 45];
+                    else if (letter === "G") range = [46, 60];
+                    else range = [61, 75];
+
+                    filtered = filtered.concat(
+                        availableNumbers.filter(num => num >= range[0] && num <= range[1])
+                    );
+                });
+                availableNumbers = filtered;
+
+                if (availableNumbers.length === 0) {
+                    calledNumberElement.textContent = "All Done!";
+                    return;
+                }
+            }
+
+            const index = Math.floor(Math.random() * availableNumbers.length);
+            const number = availableNumbers[index];
+
+            allNumbers = allNumbers.filter(n => n !== number);
+            calledNumbers.push(number);
+
+            let letter;
+            if (number <= 15) letter = "B";
+            else if (number <= 30) letter = "I";
+            else if (number <= 45) letter = "N";
+            else if (number <= 60) letter = "G";
+            else letter = "O";
+
+            calledNumberElement.textContent = `${letter} - ${number}`;
+            highlightNumber(number);
+        }
+
+        function highlightNumber(number) {
+            const cells = document.querySelectorAll(".bingo-cell");
+            cells.forEach(cell => {
+                if (cell.textContent == number) {
+                    cell.classList.add("highlighted");
+                }
+            });
+        }
+
+        function resetBoard() {
+            generateBoard();
+        }
+
+        function resetAll() {
+            location.reload(); 
+        }
+
+        generateBoard();
+        generatePatternBoard();
+
+
+        //Prize
+        let prize;
+
+        document.getElementById("Prizebtn").onclick = function(){
+            prize = document.getElementById("Prize").value;
+            document.getElementById("DisplayPrize").textContent = `🏆Prize: ${prize} 💸`;
+        }
+
+        function resetPrize(){
+            document.getElementById("DisplayPrize").textContent = ``;
+        }
+
+        // ===== Confetti from both sides =====
+        function blastBothSides() {
+            confetti({
+                particleCount: 80,
+                angle: 60,
+                spread: 70,
+                origin: { x: 0, y: 0.8 }
+            });
+
+            confetti({
+                particleCount: 80,
+                angle: 120,
+                spread: 70,
+                origin: { x: 1, y: 0.8 }
+            });
+        }
+
+        // ===== Continuous falling confetti =====
+        let continuousConfettiInterval;
+
+        function startContinuousConfetti() {
+            if (continuousConfettiInterval) return;
+
+            continuousConfettiInterval = setInterval(() => {
+                confetti({
+                    particleCount: 8,
+                    spread: 90,
+                    startVelocity: 15,
+                    origin: { x: Math.random(), y: 0 }
+                });
+            }, 180);
+        }
+
+        function triggerEffects() {
+            blastBothSides();
+            startContinuousConfetti();
+        }
+
+    </script>
+    ```
+
+</body>
+
+</html>
