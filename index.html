@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title> Game Day! </title>
+    <link rel="icon" type="image/png" sizes="48x48" href="assets/icon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            background-image: url("assets/bg.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            /* full screen height */
+            flex-direction: column;
+            /* stack title + grid */
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            /* responsive font size */
+            margin: 20px 0;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6);
+            /* makes text stand out */
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 5vw;
+            /* responsive spacing */
+            width: 90%;
+            /* keeps container within screen */
+            max-width: 1200px;
+            /* limit on very large screens */
+            padding: 5vw;
+        }
+
+        .box {
+            aspect-ratio: 1 / 1;
+            /* keep square shape */
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            /* keep images inside */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            background: white;
+        }
+
+        .box a {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* crop image nicely */
+        }
+
+        /* Hover effect */
+        .box:hover {
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🎮 Choose a Game! 🎲</h1>
+    <div class="container">
+        <div class="box">
+            <a href="Bingo.html">
+                <img src="assets/bingobg.jpg" alt="Bingo">
+            </a>
+        </div>
+        <div class="box">
+            <a href="PinoyHenyo.html">
+                <img src="assets/charades.jpg" alt="Pinoy Henyo">
+            </a>
+        </div>
+        <div class="box">
+            <a href="Soon.html">
+                <img src="assets/soon.jpg" alt="Coming Soon">
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>
