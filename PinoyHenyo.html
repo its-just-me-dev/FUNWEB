@@ -1,0 +1,99 @@
+<html>
+
+<head>
+    <title>Pinoy Henyo</title>
+    <link rel="icon" type="image/png" sizes="48x48" href="assets/icon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            background-image: url("assets/bgC.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .left {
+            width: 80%;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 100px;
+            color: white;
+            margin: 0;
+            text-align: center;
+        }
+
+        .right {
+            width: 20%;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            /* spacing between buttons */
+        }
+
+        /* IMAGE BUTTON STYLE */
+        .img-btn {
+            width: 130px;
+            /* adjust size */
+            height: 130px;
+            object-fit: contain;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .img-btn:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="left">
+            <h1>CHOOSE CATEGORY</h1>
+        </div>
+
+        <div class="right">
+
+            <!-- TO OTHER FOLDERS (Sample paths) -->
+            <a href="Pinoy/tao.html">
+                <img src="assets/tao.jpg" class="img-btn">
+            </a>
+
+            <a href="Pinoy/bagay.html">
+                <img src="assets/bagay.jpg" class="img-btn">
+            </a>
+
+            <a href="Pinoy/hayop.html">
+                <img src="assets/hayop.jpg" class="img-btn">
+            </a>
+
+            <a href="Pinoy/lugar.html">
+                <img src="assets/lugar.jpg" class="img-btn">
+            </a>
+
+            <a href="Pinoy/pagkain.html">
+                <img src="assets/food.jpg" class="img-btn">
+            </a>
+
+        </div>
+    </div>
+</body>
+
+</html>
