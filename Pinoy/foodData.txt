@@ -1,0 +1,102 @@
+Adobo
+Sinigang
+Lechon
+Pancit Canton
+Pancit Malabon
+Pancit Bihon
+Kare-Kare
+Halo-Halo
+Lumpia
+Laing
+Bistek Tagalog
+Bangus
+Tocino
+Longganisa
+Puto
+Kutsinta
+Bibingka
+Turon
+Balut
+Champorado
+Arroz Caldo
+Pinakbet
+Menudo
+Kaldereta
+Pakbet
+Sisig
+Dinuguan
+Inihaw na Baboy
+Inihaw na Manok
+Bagnet
+Bicol Express
+Chicken Inasal
+Pork BBQ
+Taho
+Empanada
+Mangga at Bagoong
+Ginataang Halo-Halo
+Pichi-Pichi
+Sorbetes
+Ukoy
+Fish Balls
+Kwek-Kwek
+Siopao
+Siomai
+Maja Blanca
+Champorado at Tuyo
+Pochero
+Sotanghon
+Dinakdakan
+Pizza
+Burger
+Sushi
+Pasta
+Tacos
+Hot Dog
+Fried Chicken
+Ramen
+Steak
+Ice Cream
+Chocolate
+Pancakes
+Waffles
+Doughnuts
+French Fries
+Sandwich
+Lasagna
+Paella
+Burrito
+Curry
+Dim Sum
+Pho
+Kebab
+Falafel
+Gyoza
+Tempura
+Nachos
+Macaroni and Cheese
+Spaghetti
+Chow Mein
+Sashimi
+Grilled Cheese
+Peking Duck
+Tom Yum
+Kimchi
+Bibimbap
+Banh Mi
+Croissant
+Bagel
+Cheesecake
+Brownie
+Cupcake
+Muffin
+Tiramisu
+Gelato
+Crepe
+Churros
+Poutine
+Ceviche
+Hummus
+Shawarma
+Samosa
+Pierogi

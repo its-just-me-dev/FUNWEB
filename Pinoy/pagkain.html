@@ -1,0 +1,308 @@
+<html>
+
+<head>
+    <title>Pinoy Henyo</title>
+    <link rel="icon" type="image/png" sizes="48x48" href="../assets/icon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            background-image: url("../assets/bgC.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            min-height: 100vh;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .left {
+            width: 80%;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 20px;
+            text-align: center;
+        }
+
+        #timer {
+            position: absolute;
+            top: 20px;
+            font-size: 50px;
+            color: white;
+            font-weight: bold;
+        }
+
+        #wordDisplay {
+            font-size: 80px;
+            color: white;
+            margin: 0;
+            text-align: center;
+            word-break: break-word;
+        }
+
+        #summary {
+            margin-top: 30px;
+            font-size: 18px;
+            color: white;
+            text-align: center;
+            max-width: 90%;
+            display: none;
+            max-height: 60%;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        #summary table {
+            width: 100%;
+            border-collapse: collapse;
+            color: white;
+        }
+
+        #summary table th {
+            position: sticky;
+            top: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+            padding: 5px;
+            color: white;
+            border: none;
+        }
+
+        #summary table td {
+            padding: 8px;
+            text-align: center;
+            vertical-align: top;
+            color: white;
+            border: none;
+        }
+
+        /* Vertical border between columns */
+        #summary table td:first-child {
+            border-right: 2px solid white;
+        }
+
+        .right {
+            width: 20%;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .right button {
+            width: 120px;
+            padding: 15px 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .right button.start {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            animation: pulse 2s infinite;
+        }
+
+        .right button.stop {
+            background: linear-gradient(135deg, #6c757d, #343a40);
+        }
+
+        .right button.pass {
+            background: linear-gradient(135deg, #6c63ff, #3b3bff);
+        }
+
+        .right button.correct {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+        }
+
+        .right button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .side-buttons {
+            display: flex;
+            gap: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="left">
+            <div id="timer">60</div>
+            <h1 id="wordDisplay">Pinoy Henyo: Pagkain/Food</h1>
+            <div id="summary"></div>
+        </div>
+
+        <div class="right">
+            <button class="start" id="startBtn">START</button>
+            <button class="stop" id="stopBtn">STOP</button>
+            <div class="side-buttons">
+                <button class="pass" id="passBtn">PASS</button>
+                <button class="correct" id="correctBtn">CORRECT</button>
+            </div>
+            <br><br>
+            <a href="../PinoyHenyo.html">
+                <button class="start">RETURN</button>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let words = [];
+        let wordHistory = [];
+        let timerDuration = 60;
+        let timerInterval;
+        let timerRunning = false;
+
+        const wordDisplay = document.getElementById("wordDisplay");
+        const summaryDiv = document.getElementById("summary");
+        const timerDiv = document.getElementById("timer");
+
+        // Load words from file
+        fetch("foodData.txt")
+            .then(response => response.text())
+            .then(text => {
+                words = text.split("\n").map(w => w.trim()).filter(w => w.length > 0);
+            });
+
+        function showRandomWord() {
+            if (words.length === 0 || !timerRunning) return;
+
+            // Pick random index
+            const index = Math.floor(Math.random() * words.length);
+            const word = words[index];
+
+            // Remove the word from the array so it won't appear again
+            words.splice(index, 1);
+
+            wordDisplay.textContent = word;
+            return word;
+        }
+
+        function startTimer() {
+            if (timerRunning) return;
+            timerRunning = true;
+            summaryDiv.style.display = "none";
+            timerInterval = setInterval(() => {
+                timerDuration--;
+                timerDiv.textContent = timerDuration;
+                if (timerDuration <= 0) {
+                    clearInterval(timerInterval);
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            endGame();
+        }
+
+        function endGame() {
+            timerRunning = false;
+            wordDisplay.textContent = "Game Over!";
+            summaryDiv.style.display = "block";
+
+            const correctWords = wordHistory.filter(w => w.status === "correct").map(w => w.word);
+            const passedWords = wordHistory.filter(w => w.status === "pass").map(w => w.word);
+
+            const maxRows = Math.max(correctWords.length, passedWords.length);
+
+            let summaryHTML = `<table>
+                <thead>
+                    <tr>
+                        <th>Passed Words</th>
+                        <th>Correct Words</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+            for (let i = 0; i < maxRows; i++) {
+                summaryHTML += "<tr>";
+                summaryHTML += `<td>${passedWords[i] ? passedWords[i] : ""}</td>`;
+                summaryHTML += `<td>${correctWords[i] ? correctWords[i] : ""}</td>`;
+                summaryHTML += "</tr>";
+            }
+
+            summaryHTML += "</tbody></table>";
+            summaryDiv.innerHTML = summaryHTML;
+        }
+
+        document.getElementById("startBtn").addEventListener("click", () => {
+            timerDuration = 60;
+            timerDiv.textContent = timerDuration;
+            wordHistory = [];
+
+            // Reload words from file to reset for new round
+            fetch("foodData.txt")
+                .then(response => response.text())
+                .then(text => {
+                    words = text.split("\n").map(w => w.trim()).filter(w => w.length > 0);
+
+                    startTimer();
+                    const word = showRandomWord();
+                    wordHistory.push({ word: word, status: "shown" });
+                });
+        });
+
+        document.getElementById("stopBtn").addEventListener("click", stopTimer);
+
+        document.getElementById("passBtn").addEventListener("click", () => {
+            if (!timerRunning) return;
+            const word = showRandomWord();
+            if (word) wordHistory.push({ word: word, status: "pass" });
+        });
+
+        document.getElementById("correctBtn").addEventListener("click", () => {
+            if (!timerRunning) return;
+            const word = showRandomWord();
+            if (word) wordHistory.push({ word: word, status: "correct" });
+        });
+
+        // Button click animation
+        const buttons = document.querySelectorAll('.right button');
+        buttons.forEach(button => {
+            button.addEventListener('mousedown', () => { button.style.transform = 'scale(0.95)'; });
+            button.addEventListener('mouseup', () => { button.style.transform = 'scale(1)'; });
+        });
+
+    </script>
+</body>
+
+</html>
