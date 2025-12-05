@@ -233,6 +233,8 @@
             patternBoard.innerHTML = "";
             const letters = ["B", "I", "N", "G", "O"];
 
+            let totalRow = 0;
+
             // Top row: letters
             for (let i = 0; i < 5; i++) {
                 const cell = document.createElement("div");
@@ -242,16 +244,34 @@
                 patternBoard.appendChild(cell);
             }
 
-            // 4 more rows: empty cells
+            totalRow++; // now totalRow = 1
+
+            // 5 more rows
             for (let r = 0; r < 5; r++) {
                 for (let c = 0; c < 5; c++) {
+
+                    // ⭐ Replace 4th row, 3rd column with FREE text
+                    // (totalRow = 3, c = 2)
+                    if (totalRow === 3 && c === 2) {
+                        const freeCell = document.createElement("div");
+                        freeCell.classList.add("pattern-cell");
+                        freeCell.style.fontSize = "20px";
+                        freeCell.style.cursor = "default";
+                        freeCell.textContent = "FREE";
+                        patternBoard.appendChild(freeCell);
+                        continue;
+                    }
+
+                    // normal pattern cell
                     const cell = document.createElement("div");
                     cell.classList.add("pattern-cell");
                     cell.onclick = () => togglePatternCell(cell, letters[c]);
                     patternBoard.appendChild(cell);
                 }
+                totalRow++;
             }
         }
+
 
         function togglePatternCell(cell, letter) {
             if (cell.classList.contains("active")) {
@@ -387,6 +407,5 @@
     </script>
 
 </body>
-
 
 </html>
