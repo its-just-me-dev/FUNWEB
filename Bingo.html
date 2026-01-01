@@ -56,7 +56,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 60px; /* Bingo Board Font size */
+            font-size: 60px;
+            /* Bingo Board Font size */
             cursor: pointer;
         }
 
@@ -142,7 +143,7 @@
             border-radius: 5px;
         }
 
-        .control-group{
+        .control-group {
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -195,6 +196,8 @@
         <div class="controls">
             <button onclick="callNumber()">Call Number</button>
             <button onclick="triggerEffects()"> Congratulations!! 🎉</button>
+            <button onclick="savePattern()">Save Pattern</button>
+            <button onclick="startPatternSlideshow()">Start</button>
         </div>
     </div>
 
@@ -208,6 +211,12 @@
         let calledNumbers = [];
         let allNumbers = [];
         let activeFilters = new Set();
+
+        // ===== Pattern Slideshow ADD-ON =====
+        let savedPatterns = [];
+        let patternSlideIndex = 0;
+        let patternSlideInterval = null;
+
 
         function generateBoard() {
             board.innerHTML = "";
@@ -347,7 +356,7 @@
         }
 
         function resetAll() {
-            location.reload(); 
+            location.reload();
         }
 
         generateBoard();
@@ -357,12 +366,12 @@
         //Prize
         let prize;
 
-        document.getElementById("Prizebtn").onclick = function(){
+        document.getElementById("Prizebtn").onclick = function () {
             prize = document.getElementById("Prize").value;
             document.getElementById("DisplayPrize").textContent = `🏆Prize: ${prize} 💸`;
         }
 
-        function resetPrize(){
+        function resetPrize() {
             document.getElementById("DisplayPrize").textContent = ``;
         }
 
@@ -404,9 +413,65 @@
             startContinuousConfetti();
         }
 
+        function savePattern() {
+            const pattern = [];
+
+            [...patternBoard.children].forEach((cell, i) => {
+                if (cell.classList.contains("active")) {
+                    pattern.push(i);
+                }
+            });
+
+            if (pattern.length === 0) {
+                alert("No pattern selected");
+                return;
+            }
+
+            // ✅ FIX 1: actually save the pattern
+            savedPatterns.push(pattern);
+
+            // clear highlights ONLY (filters stay)
+            [...patternBoard.children].forEach(cell => {
+                cell.classList.remove("active");
+            });
+        }
+
+        function clearPattern() {
+            [...patternBoard.children].forEach(cell => {
+                cell.classList.remove("active");
+            });
+            activeFilters.clear();
+        }
+
+        function loadPattern(index) {
+            clearPattern();
+
+            const pattern = savedPatterns[index];
+            pattern.forEach(i => {
+                const cell = patternBoard.children[i];
+                if (cell && cell.textContent !== "FREE") {
+                    cell.classList.add("active");
+
+                    if (["B","I","N","G","O"].includes(cell.textContent)) {
+                        activeFilters.add(cell.textContent);
+                    }
+                }
+            });
+        }
+
+        function startPatternSlideshow() {
+            if (patternSlideInterval) return;
+
+            loadPattern(patternSlideIndex);
+
+            patternSlideInterval = setInterval(() => {
+                patternSlideIndex =
+                    (patternSlideIndex + 1) % savedPatterns.length;
+                loadPattern(patternSlideIndex);
+            }, 3000);
+        }
+
     </script>
 
 </body>
-
 </html>
-
